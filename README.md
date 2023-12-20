@@ -2,6 +2,8 @@
 
 This project serves as an example showcasing the use of **Kafka Streams** **Interactive Query** in the context of a **Spring Boot** application.
 
+Inspired by [WordCountInteractiveQueriesExample.java](https://github.com/confluentinc/kafka-streams-examples/blob/7.5.2-post/src/main/java/io/confluent/examples/streams/interactivequeries/WordCountInteractiveQueriesExample.java) from [Confluent's Kafka Streams Examples](https://github.com/confluentinc/kafka-streams-examples) for the Interactive Queries part.
+
 ## Project Overview
 
 The project is built using Java 21 and leverages the following technologies:
