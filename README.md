@@ -9,9 +9,9 @@ Inspired by [WordCountInteractiveQueriesExample.java](https://github.com/conflue
 The project is built using Java 21 and leverages the following technologies:
 
 - [Spring Boot](https://spring.io/projects/spring-boot)
-- [Spring Kafka](https://spring.io/projects/spring-kafka)
+- [Spring Kafka](https://spring.io/projects/spring-kafka) : [Apache Kafka Streams Support](https://docs.spring.io/spring-kafka/reference/streams.html)
 - [Apache Kafka Streams](https://kafka.apache.org/documentation/streams/)
-- [Confluent SerDe](https://docs.confluent.io/platform/current/schema-registry/fundamentals/serdes-develop/serdes-avro.html)
+- [Confluent SerDe Avro](https://docs.confluent.io/platform/current/schema-registry/fundamentals/serdes-develop/serdes-avro.html)
 
 ## Maven Configuration
 
