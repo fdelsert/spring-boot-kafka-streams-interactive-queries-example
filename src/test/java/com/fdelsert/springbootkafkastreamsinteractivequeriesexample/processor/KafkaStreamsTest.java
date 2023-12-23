@@ -21,6 +21,8 @@ import org.springframework.core.env.Environment;
 import java.util.Map;
 import java.util.Properties;
 
+import static com.fdelsert.springbootkafkastreamsinteractivequeriesexample.processor.StreamProcessor.INPUT_TOPIC;
+import static com.fdelsert.springbootkafkastreamsinteractivequeriesexample.processor.StreamProcessor.OUTPUT_TOPIC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -63,8 +65,8 @@ class KafkaStreamsTest {
         var record = new TestRecord<>("234", user);
 
         // when
-        var inputTopic = testDriver.createInputTopic("input-topic", new StringSerializer(), avroUserSerde.serializer());
-        var outputTopic = testDriver.createOutputTopic("output-topic", new StringDeserializer(), avroUserSerde.deserializer());
+        var inputTopic = testDriver.createInputTopic(INPUT_TOPIC, new StringSerializer(), avroUserSerde.serializer());
+        var outputTopic = testDriver.createOutputTopic(OUTPUT_TOPIC, new StringDeserializer(), avroUserSerde.deserializer());
         inputTopic.pipeInput(record);
 
         // then

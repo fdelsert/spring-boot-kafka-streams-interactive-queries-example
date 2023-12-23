@@ -1,5 +1,6 @@
 package com.fdelsert.springbootkafkastreamsinteractivequeriesexample.processor;
 
+import static com.fdelsert.springbootkafkastreamsinteractivequeriesexample.processor.StreamProcessor.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -98,17 +99,17 @@ class StreamProcessorIntegrationTest {
         var user = new User("John", 33, "blue");
 
         var producer = createProducer();
-        var consumer = createConsumer("output-topic");
+        var consumer = createConsumer(OUTPUT_TOPIC);
 
         // when
-        producer.send(new ProducerRecord<>("input-topic", "234", user)).get();
+        producer.send(new ProducerRecord<>(INPUT_TOPIC, "234", user)).get();
 
         // then
         var records = KafkaTestUtils.getRecords(consumer, Duration.ofSeconds(60));
         assertThat(records).isNotEmpty();
         assertThat(records.iterator().next().value()).isEqualTo(user);
 
-        this.mockMvc.perform(get("/state/keyvalue/user-table/234")).andDo(print()).andExpect(status().isOk())
+        this.mockMvc.perform(get("/state/keyvalue/" + USER_TABLE + "/234")).andDo(print()).andExpect(status().isOk())
                 .andExpect(content().string(equalTo("{\"key\":\"234\",\"value\":{\"name\":\"John\",\"favorite_number\":33,\"favorite_color\":\"blue\"}}")));
     }
 
