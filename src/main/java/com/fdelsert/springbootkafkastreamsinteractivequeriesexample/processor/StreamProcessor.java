@@ -5,11 +5,12 @@ import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.Materialized;
 import org.springframework.stereotype.Component;
 
+import static com.fdelsert.springbootkafkastreamsinteractivequeriesexample.config.TopicConfig.INPUT_TOPIC;
+import static com.fdelsert.springbootkafkastreamsinteractivequeriesexample.config.TopicConfig.OUTPUT_TOPIC;
+
 @Component
 public class StreamProcessor {
 
-    static final String INPUT_TOPIC = "input-topic";
-    static final String OUTPUT_TOPIC = "output-topic";
     static final String USER_TABLE = "user-table";
 
     public StreamProcessor(StreamsBuilder streamsBuilder) {

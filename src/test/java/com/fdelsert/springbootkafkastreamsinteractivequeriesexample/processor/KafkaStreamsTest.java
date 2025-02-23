@@ -21,8 +21,8 @@ import org.springframework.core.env.Environment;
 import java.util.Map;
 import java.util.Properties;
 
-import static com.fdelsert.springbootkafkastreamsinteractivequeriesexample.processor.StreamProcessor.INPUT_TOPIC;
-import static com.fdelsert.springbootkafkastreamsinteractivequeriesexample.processor.StreamProcessor.OUTPUT_TOPIC;
+import static com.fdelsert.springbootkafkastreamsinteractivequeriesexample.config.TopicConfig.INPUT_TOPIC;
+import static com.fdelsert.springbootkafkastreamsinteractivequeriesexample.config.TopicConfig.OUTPUT_TOPIC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 

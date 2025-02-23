@@ -1,5 +1,7 @@
 package com.fdelsert.springbootkafkastreamsinteractivequeriesexample.processor;
 
+import static com.fdelsert.springbootkafkastreamsinteractivequeriesexample.config.TopicConfig.INPUT_TOPIC;
+import static com.fdelsert.springbootkafkastreamsinteractivequeriesexample.config.TopicConfig.OUTPUT_TOPIC;
 import static com.fdelsert.springbootkafkastreamsinteractivequeriesexample.processor.StreamProcessor.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -9,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.Duration;
+import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 
@@ -27,37 +30,32 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
-import org.springframework.kafka.test.EmbeddedKafkaBroker;
-import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.kafka.ConfluentKafkaContainer;
 
+@Testcontainers
 @SpringBootTest(
         properties = {
-                "spring.kafka.bootstrap-servers = ${spring.embedded.kafka.brokers}",
                 "spring.kafka.streams.properties.schema.registry.url : mock://schema-registry"
         },
         webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@EmbeddedKafka(
-        controlledShutdown = true,
-        topics = {
-                "input-topic",
-                "output-topic"
-        },
-        partitions = 1,
-        brokerProperties = {
-                "listeners=PLAINTEXT://localhost:9092",
-                "port=9092"
-        })
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @AutoConfigureMockMvc
 class StreamProcessorIntegrationTest {
 
     private static final String MOCK_SCHEMA_REGISTRY_URL = "mock://schema-registry";
 
-    @Autowired
-    private EmbeddedKafkaBroker embeddedKafkaBroker;
+    @Container
+    static final ConfluentKafkaContainer kafka = new ConfluentKafkaContainer("confluentinc/cp-kafka:7.8.0");
+
+    @DynamicPropertySource
+    static void registerKafkaProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
+    }
 
     @Autowired
     private MockMvc mockMvc;
@@ -68,15 +66,14 @@ class StreamProcessorIntegrationTest {
         avroUserSerde.configure(serdeConfig, false);
 
         Map<String, Object> consumerProps =
-                KafkaTestUtils.consumerProps(
-                        UUID.randomUUID().toString(), "true", this.embeddedKafkaBroker);
+                KafkaTestUtils.consumerProps(kafka.getBootstrapServers(), UUID.randomUUID().toString(), "true");
 
         DefaultKafkaConsumerFactory<String, User> kafkaConsumerFactory =
                 new DefaultKafkaConsumerFactory<>(
                         consumerProps, new StringDeserializer(), avroUserSerde.deserializer(), false);
 
-        var consumer = kafkaConsumerFactory.createConsumer();
-        this.embeddedKafkaBroker.consumeFromAnEmbeddedTopic(consumer, topic);
+        var consumer =  kafkaConsumerFactory.createConsumer();
+        consumer.subscribe(Collections.singletonList(OUTPUT_TOPIC));
         return consumer;
     }
 
@@ -85,7 +82,7 @@ class StreamProcessorIntegrationTest {
         var serdeConfig = Map.of(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, MOCK_SCHEMA_REGISTRY_URL);
         avroUserSerde.configure(serdeConfig, false);
 
-        var producerProps = KafkaTestUtils.producerProps(this.embeddedKafkaBroker);
+        var producerProps = KafkaTestUtils.producerProps(kafka.getBootstrapServers());
 
         var kafkaProducerFactory =
                 new DefaultKafkaProducerFactory<>(
