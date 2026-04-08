@@ -6,7 +6,7 @@ spring:
       properties:
         bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
         application.server: ${HOST_IP:localhost}:${server.port:8080}
-        schema.registry.url: ${KAFKA_REGYSTRY_URL}
+        schema.registry.url: ${KAFKA_REGYSTRY_URL:http://localhost:8081}
         default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
         default.value.serde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
         value.deserializer.specific.avro.reader: true
