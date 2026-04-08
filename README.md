@@ -24,9 +24,11 @@ The project's Maven configuration is specified in the `pom.xml` file, with notab
 - `spring-boot-starter-kafka`
 - `kafka-streams`
 - `kafka-streams-avro-serde`
+- `jackson-dataformat-avro`
 - `avro-maven-plugin`
 - `spring-boot-starter-kafka-test`
 - `spring-boot-starter-webmvc-test`
+- `testcontainers-kafka`
 
 ## Quick Start
 
@@ -184,7 +186,7 @@ curl -s http://localhost:8081/subjects/input-topic-value/versions/1 | jq
 curl -s http://localhost:8080/actuator/health | jq
 
 # Kafka Streams state specifically
-curl -s http://localhost:8080/actuator/health | jq '.components.kafkaStreams'
+curl -s http://localhost:8080/actuator/health | jq '.components.kafkaStream'
 ```
 
 ## Cleanup
