@@ -21,12 +21,12 @@ The project's Maven configuration is specified in the `pom.xml` file, with notab
 
 - `spring-boot-starter-web`
 - `spring-boot-starter-actuator`
-- `spring-kafka`
+- `spring-boot-starter-kafka`
 - `kafka-streams`
 - `kafka-streams-avro-serde`
 - `avro-maven-plugin`
-- `spring-boot-starter-test`
-- `spring-kafka-test`
+- `spring-boot-starter-kafka-test`
+- `spring-boot-starter-webmvc-test`
 
 ## Quick Start
 
