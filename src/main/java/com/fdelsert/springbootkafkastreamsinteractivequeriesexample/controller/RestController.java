@@ -3,7 +3,6 @@ package com.fdelsert.springbootkafkastreamsinteractivequeriesexample.controller;
 import static org.apache.kafka.streams.StoreQueryParameters.fromNameAndType;
 import static org.springframework.http.HttpStatus.*;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.ByteArrayOutputStream;
@@ -13,7 +12,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.avro.AvroFactory;
 import com.fasterxml.jackson.dataformat.avro.AvroSchema;
 import com.fdelsert.springbootkafkastreamsinteractivequeriesexample.services.HostStoreInfo;
@@ -51,7 +49,7 @@ public class RestController {
         hostInfo = HostInfo.buildFromEndpoint(applicationServer);
     }
 
-    public JsonNode convertAvroToJsonNode(GenericRecord genericRecord) {
+    public Object convertAvroToJson(GenericRecord genericRecord) {
         try(ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             DatumWriter<GenericRecord> writer = new GenericDatumWriter<>(genericRecord.getSchema());
             BinaryEncoder encoder = EncoderFactory.get().binaryEncoder(outputStream, null);
@@ -60,7 +58,7 @@ public class RestController {
 
             byte[] bytes = outputStream.toByteArray();
 
-            return mapper.readerFor(ObjectNode.class)
+            return mapper.readerFor(Object.class)
                     .with(new AvroSchema(genericRecord.getSchema()))
                     .readValue(bytes);
         } catch (IOException e) {
@@ -99,7 +97,7 @@ public class RestController {
         if (value == null) {
             throw new ResponseStatusException(NOT_FOUND, "Key not found.");
         }
-        return new KeyValueRecord(key, convertAvroToJsonNode(value));
+        return new KeyValueRecord(key, convertAvroToJson(value));
     }
 
     private KeyValueRecord fetchByKey(final HostStoreInfo host, final String path) {
@@ -204,7 +202,7 @@ public class RestController {
             // Convert the results
             while (range.hasNext()) {
                 final KeyValue<String, GenericRecord> next = range.next();
-                results.add(new KeyValueRecord(next.key, convertAvroToJsonNode(next.value)));
+                results.add(new KeyValueRecord(next.key, convertAvroToJson(next.value)));
             }
         }
 
