@@ -4,8 +4,6 @@ This project serves as an example showcasing the use of **Kafka Streams** **Inte
 
 > **This project is a learning example and is not intended for production use.** It is not production-ready and lacks error handling, security, scalability considerations, and other aspects required for a production deployment.
 
-Inspired by [WordCountInteractiveQueriesExample.java](https://github.com/confluentinc/kafka-streams-examples/blob/7.5.2-post/src/main/java/io/confluent/examples/streams/interactivequeries/WordCountInteractiveQueriesExample.java) from [Confluent's Kafka Streams Examples](https://github.com/confluentinc/kafka-streams-examples) for the Interactive Queries part.
-
 ## Project Overview
 
 The project is built using Java 21 and leverages the following technologies:
@@ -15,20 +13,17 @@ The project is built using Java 21 and leverages the following technologies:
 - [Apache Kafka Streams](https://kafka.apache.org/documentation/streams/)
 - [Confluent SerDe Avro](https://docs.confluent.io/platform/current/schema-registry/fundamentals/serdes-develop/serdes-avro.html)
 
-## Maven Configuration
+Inspired by [WordCountInteractiveQueriesExample.java](https://github.com/confluentinc/kafka-streams-examples/blob/7.5.2-post/src/main/java/io/confluent/examples/streams/interactivequeries/WordCountInteractiveQueriesExample.java) from [Confluent's Kafka Streams Examples](https://github.com/confluentinc/kafka-streams-examples).
 
-The project's Maven configuration is specified in the `pom.xml` file, with notable dependencies and plugins including:
+## Architecture
 
-- `spring-boot-starter-web`
-- `spring-boot-starter-actuator`
-- `spring-boot-starter-kafka`
-- `kafka-streams`
-- `kafka-streams-avro-serde`
-- `jackson-dataformat-avro`
-- `avro-maven-plugin`
-- `spring-boot-starter-kafka-test`
-- `spring-boot-starter-webmvc-test`
-- `testcontainers-kafka`
+The Kafka Streams application:
+1. **Consumes** Avro messages from the `input-topic`
+2. **Materialises** data into a state store named `user-table` (KTable)
+3. **Replicates** messages to the `output-topic` (for validation)
+4. **Exposes** a REST API to query the state store (Interactive Queries)
+
+The `User` Avro schema is automatically serialized/deserialized using Confluent's Avro SerDe and Karapace Schema Registry.
 
 ## Quick Start
 
@@ -201,20 +196,6 @@ docker compose down
 docker compose down -v
 ```
 
-## Architecture
-
-The Kafka Streams application:
-1. **Consumes** Avro messages from the `input-topic`
-2. **Materialises** data into a state store named `user-table` (KTable)
-3. **Replicates** messages to the `output-topic` (for validation)
-4. **Exposes** a REST API to query the state store (Interactive Queries)
-
-The `User` Avro schema is automatically serialized/deserialized using Confluent's Avro SerDe and Karapace Schema Registry.
-
 ## Going Further: KStreamplify
 
 If you are looking for a production-ready solution, consider [KStreamplify](https://github.com/michelin/kstreamplify), an open-source library by Michelin that integrates natively with Spring Boot and provides built-in support for Kafka Streams Interactive Queries (among other features like error handling, topology testing, health checks, and more).
-
-## Additional Notes
-
-Feel free to explore and adapt this project as needed for your own use cases. For more information on Kafka Streams Interactive Queries, refer to the [Confluent documentation](https://docs.confluent.io/platform/current/streams/developer-guide/interactive-queries.html).
