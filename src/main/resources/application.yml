@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: "spring-boot-app"
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     streams:
@@ -10,6 +12,8 @@ spring:
         default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
         default.value.serde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
         value.deserializer.specific.avro.reader: true
+  jmx:
+    enabled: true
 
 management:
   endpoint:
@@ -18,4 +22,9 @@ management:
   endpoints:
     web:
       exposure:
-        include: health
+        include: health,info,prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
